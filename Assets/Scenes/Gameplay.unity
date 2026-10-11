@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 177983528}
   m_Layer: 0
   m_Name: TrapTilemap
-  m_TagString: Untagged
+  m_TagString: Trap
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1665,6 +1665,7 @@ GameObject:
   - component: {fileID: 787669665}
   - component: {fileID: 787669670}
   - component: {fileID: 787669669}
+  - component: {fileID: 787669671}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1871,6 +1872,18 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &787669671
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 787669664}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1713006ee7781133da14ea6cf380b2c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Respawn
 --- !u!1 &1010084268
 GameObject:
   m_ObjectHideFlags: 0
