@@ -6,7 +6,17 @@ public class Trap : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            Destroy(collision.gameObject);
+            GameObject spawnPoint = GameObject.Find("SpawnpointTemp");
+            if (spawnPoint != null)
+            {
+                collision.transform.position = spawnPoint.transform.position;
+                
+                Rigidbody2D rb = collision.GetComponent<Rigidbody2D>();
+                if (rb != null)
+                {
+                    rb.linearVelocity = Vector2.zero;
+                }
+            }
         }
     }
 }
