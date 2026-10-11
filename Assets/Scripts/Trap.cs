@@ -10,7 +10,6 @@ public class Trap : MonoBehaviour
             if (spawnPoint != null)
             {
                 collision.transform.position = spawnPoint.transform.position;
-                
                 Rigidbody2D rb = collision.GetComponent<Rigidbody2D>();
                 if (rb != null)
                 {
