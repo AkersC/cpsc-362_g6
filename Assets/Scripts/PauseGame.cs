@@ -8,9 +8,9 @@ public class PauseGame : MonoBehaviour
 
     public void Resume()
     {
-    PauseMenuUI.SetActive(false);
-    Time.timeScale = 1;
-    PauseTheGame = false;
+        PauseMenuUI.SetActive(false);
+        Time.timeScale = 1;
+        PauseTheGame = false;
     }
 
     void Pause()
