@@ -34,17 +34,26 @@ public class LevelEndpoint : MonoBehaviour
         }
     }
 
-    public void LoadNextLevel()
+    
+public void LoadNextLevel()
+{
+    if (!Application.CanStreamedLevelBeLoaded(nextLevelName))
     {
-        if (!Application.CanStreamedLevelBeLoaded(nextLevelName))
-        {
-            Debug.LogWarning("Next level not found: " + nextLevelName);
-            return;
-        }
+        Debug.LogWarning("Next level not found: " + nextLevelName);
+        return;
+    }
 
+    if (SceneWipeTransition.Instance != null)
+    {
+        SceneWipeTransition.Instance.TransitionTo(nextLevelName);
+    }
+    else
+    {
         Time.timeScale = 1f;
         SceneManager.LoadScene(nextLevelName);
     }
+}
+
 
     public void LoadMainMenu()
     {
