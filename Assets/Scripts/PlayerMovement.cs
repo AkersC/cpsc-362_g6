@@ -6,6 +6,9 @@ public class PlayerMovement : MonoBehaviour
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 5f;
 
+    [Header("Gravity")]
+    [SerializeField, Min(0.01f)] private float gravityScale = 1.25f;
+
     [Header("Jumping")]
     [SerializeField] private float jumpForce = 7f;
     [SerializeField] private float fallMultiplier = 2.5f;
@@ -17,10 +20,32 @@ public class PlayerMovement : MonoBehaviour
 
     private Rigidbody2D rb;
     private Vector2 moveInput;
+    private PhysicsMaterial2D movementMaterial;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        rb.gravityScale = gravityScale;
+
+        // Friction against a vertical wall must not support the player's weight.
+        movementMaterial = new PhysicsMaterial2D("Player No Friction")
+        {
+            friction = 0f,
+            bounciness = 0f,
+            frictionCombine = PhysicsMaterialCombine2D.Minimum
+        };
+        rb.sharedMaterial = movementMaterial;
+        foreach (Collider2D playerCollider in GetComponentsInChildren<Collider2D>(true))
+        {
+            if (playerCollider.attachedRigidbody == rb)
+                playerCollider.sharedMaterial = movementMaterial;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (movementMaterial != null)
+            Destroy(movementMaterial);
     }
 
     private void FixedUpdate()
@@ -36,6 +61,7 @@ public class PlayerMovement : MonoBehaviour
         {
             rb.linearVelocity += Vector2.up *
                 Physics2D.gravity.y *
+                rb.gravityScale *
                 (fallMultiplier - 1f) *
                 Time.fixedDeltaTime;
         }
