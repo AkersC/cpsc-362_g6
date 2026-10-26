@@ -2868,6 +2868,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   moveSpeed: 5
+  gravityScale: 1.25
   jumpForce: 7
   fallMultiplier: 2.5
   groundCheck: {fileID: 1653539460}
