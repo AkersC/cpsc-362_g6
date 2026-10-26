@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 
 public class PauseGame : MonoBehaviour
 {
@@ -36,18 +35,9 @@ public class PauseGame : MonoBehaviour
         }
     }
 
-    public void RestartGame()
+    public void QuitGame()
     {
-        Time.timeScale = 1f;
-        PauseTheGame = false;
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-    }
-
-    public void LoadMainMenu()
-    {
-        Time.timeScale = 1f;
-        PauseTheGame = false;
-        SceneManager.LoadScene("MainMenu");
+        Debug.Log("Quitting Game...");
         Application.Quit();
     }
 
