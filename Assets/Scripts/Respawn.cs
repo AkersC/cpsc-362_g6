@@ -21,6 +21,7 @@ public class PlayerRespawn : MonoBehaviour
         transform.position = respawnPoint;
 
         if (controller2D != null) controller2D.enabled = true;
+        PlayerRespawnEvents.NotifyRespawned();
     }
 
     public void UpdateCheckpoint(Vector3 newPosition)
