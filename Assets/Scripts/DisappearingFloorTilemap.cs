@@ -13,6 +13,13 @@ public class DisappearingFloorTilemap : MonoBehaviour
         new Dictionary<Vector3Int, RemovedTile>();
     private readonly HashSet<Vector3Int> contactedCells = new HashSet<Vector3Int>();
 
+    private readonly HashSet<Vector3Int> connectedCells = new HashSet<Vector3Int>();
+    private readonly Queue<Vector3Int> cellsToVisit = new Queue<Vector3Int>();
+    private static readonly Vector3Int[] NeighborOffsets =
+    {
+        Vector3Int.left, Vector3Int.right, Vector3Int.up, Vector3Int.down
+    };
+
     private struct RemovedTile
     {
         public TileBase tile;
@@ -67,8 +74,28 @@ public class DisappearingFloorTilemap : MonoBehaviour
                 contactedCells.Add(cell);
         }
 
-        // Gather contacts first; rebuilding geometry can invalidate contacts.
+        // Find entire edge-connected sections before removing any tiles.
+        connectedCells.Clear();
+        cellsToVisit.Clear();
         foreach (Vector3Int cell in contactedCells)
+        {
+            if (connectedCells.Add(cell))
+                cellsToVisit.Enqueue(cell);
+        }
+
+        // Iterative flood fill avoids recursion limits on large painted sections.
+        while (cellsToVisit.Count > 0)
+        {
+            Vector3Int cell = cellsToVisit.Dequeue();
+            foreach (Vector3Int offset in NeighborOffsets)
+            {
+                Vector3Int neighbor = cell + offset;
+                if (tilemap.HasTile(neighbor) && connectedCells.Add(neighbor))
+                    cellsToVisit.Enqueue(neighbor);
+            }
+        }
+
+        foreach (Vector3Int cell in connectedCells)
         {
             if (removedTiles.ContainsKey(cell))
                 continue;
@@ -83,7 +110,7 @@ public class DisappearingFloorTilemap : MonoBehaviour
             tilemap.SetTile(cell, null);
         }
 
-        if (contactedCells.Count > 0)
+        if (connectedCells.Count > 0)
             tilemapCollider.ProcessTilemapChanges();
     }
 
