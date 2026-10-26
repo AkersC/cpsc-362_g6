@@ -15,6 +15,7 @@ public class Trap : MonoBehaviour
                 {
                     rb.linearVelocity = Vector2.zero;
                 }
+                PlayerRespawnEvents.NotifyRespawned();
             }
         }
     }
