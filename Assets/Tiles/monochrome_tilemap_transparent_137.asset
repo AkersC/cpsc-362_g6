@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: TrapTile
+  m_Name: monochrome_tilemap_transparent_137
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.Tilemaps.Tile
-  m_Sprite: {fileID: 7482667652216324306, guid: c1a0d6339231b46b0a888805e8f3d00b, type: 3}
-  m_Color: {r: 0.5450981, g: 0, b: 0, a: 1}
+  m_Sprite: {fileID: 6716368069564199815, guid: 1026b6545a9af44fe9d616eb9e017157, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
     e01: 0
