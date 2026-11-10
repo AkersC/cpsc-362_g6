@@ -22,10 +22,18 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 moveInput;
     private PhysicsMaterial2D movementMaterial;
 
+    // Animation
+    private Animator animator;
+    private SpriteRenderer spriteRenderer;
+    private static readonly int SpeedParam = Animator.StringToHash("Speed");
+    private static readonly int IsGroundedParam = Animator.StringToHash("IsGrounded");
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         rb.gravityScale = gravityScale;
+        animator = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
 
         // Friction against a vertical wall must not support the player's weight.
         movementMaterial = new PhysicsMaterial2D("Player No Friction")
@@ -39,6 +47,22 @@ public class PlayerMovement : MonoBehaviour
         {
             if (playerCollider.attachedRigidbody == rb)
                 playerCollider.sharedMaterial = movementMaterial;
+        }
+    }
+
+    private void Update()
+    {
+        // Face the direction the player is moving
+        if (spriteRenderer != null && moveInput.x != 0f)
+        {
+            spriteRenderer.flipX = moveInput.x < 0f;
+        }
+
+        // Tell the Animator what the player is doing
+        if (animator != null)
+        {
+            animator.SetFloat(SpeedParam, Mathf.Abs(rb.linearVelocity.x));
+            animator.SetBool(IsGroundedParam, IsGrounded());
         }
     }
 
