@@ -12,6 +12,7 @@
 - [Tech Stack](#Tech-Stack)
 - [Features](#Features)
 - [Directory Structure](#Directory-Structure)
+- [Video Demo](#Video-Demo)
 
 # Project Description
 - This is a video game made in unity engine that is based on clearing levels quickly with the intent of trying multiple times to find the hidden traps and improve level clearing times.
@@ -68,3 +69,5 @@ cpsc-362_g6/
 └── ProjectSettings/            # Unity project settings, including the scene build order
 ```
 
+# Video Demo
+![Demo](readme/demo.gif)
