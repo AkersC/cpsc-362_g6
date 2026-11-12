@@ -18,6 +18,11 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float groundCheckRadius = 0.2f;
     [SerializeField] private LayerMask groundLayer;
 
+    [Header("Audio and Hazard")]
+    [SerializeField] private AudioClip deathSound;
+    [SerializeField] private string trapTag = "Trap";
+    private AudioSource audioSource;
+
     private Rigidbody2D rb;
     private Vector2 moveInput;
     private PhysicsMaterial2D movementMaterial;
@@ -34,6 +39,12 @@ public class PlayerMovement : MonoBehaviour
         rb.gravityScale = gravityScale;
         animator = GetComponent<Animator>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
 
         // Friction against a vertical wall must not support the player's weight.
         movementMaterial = new PhysicsMaterial2D("Player No Friction")
@@ -90,6 +101,23 @@ public class PlayerMovement : MonoBehaviour
                 Time.fixedDeltaTime;
         }
     }
+
+    private void OCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag(trapTag))
+        {
+            PlayDeathSound();
+        }
+    }
+
+    private void PlayDeathSound()
+    {
+        if (deathSound != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(deathSound);
+        }
+    }
+
 
     // Called by the Move Input Action
     public void OnMove(InputValue value)
