@@ -56,7 +56,7 @@ public class PauseGame : MonoBehaviour
     {
         if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
         {
-            if (slideIn != null && slideIn.IsClosing)
+            if (SceneWipeTransition.IsBusy || (slideIn != null && slideIn.IsClosing))
             {
                 return;
             }
@@ -86,8 +86,7 @@ public class PauseGame : MonoBehaviour
 
     public void LoadMainMenu()
     {
-        Time.timeScale = 1f;
         PauseTheGame = false;
-        SceneManager.LoadScene("MainMenu");
+        SceneWipeTransition.Load("MainMenu");
     }
 }

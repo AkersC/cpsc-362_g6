@@ -23,6 +23,11 @@ public class SceneWipeTransition : MonoBehaviour
     private bool isTransitioning;
     private float expo;
 
+    public static bool IsBusy
+    {
+        get { return Instance != null && Instance.isTransitioning; }
+    }
+
     public static void Load(string sceneName)
     {
         if (Instance == null)
