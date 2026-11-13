@@ -43,15 +43,7 @@ public void LoadNextLevel()
         return;
     }
 
-    if (SceneWipeTransition.Instance != null)
-    {
-        SceneWipeTransition.Instance.TransitionTo(nextLevelName);
-    }
-    else
-    {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene(nextLevelName);
-    }
+    SceneWipeTransition.Load(nextLevelName);
 }
 
 
@@ -63,7 +55,6 @@ public void LoadNextLevel()
             return;
         }
 
-        Time.timeScale = 1f;
-        SceneManager.LoadScene("MainMenu");
+        SceneWipeTransition.Load("MainMenu");
     }
 }

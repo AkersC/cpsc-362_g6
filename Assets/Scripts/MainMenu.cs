@@ -5,6 +5,11 @@ public class MainMenu : MonoBehaviour
 {
     public void StartGame()
     {
-        SceneManager.LoadScene("Gameplay");
+        SceneWipeTransition.Load("Gameplay");
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
     }
 }
