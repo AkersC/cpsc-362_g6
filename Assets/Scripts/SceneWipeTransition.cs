@@ -12,8 +12,7 @@ public class SceneWipeTransition : MonoBehaviour
     [SerializeField] private float holdDuration = 0.5f;
     [SerializeField] private float patternScale = 4f;
     [SerializeField] private Texture2D patternTexture;
-    [SerializeField] private Color wipeColor =
-        new Color(0.79f, 0.66f, 0.51f, 1f);
+    [SerializeField] private Color wipeColor = new Color(0.79f, 0.66f, 0.51f, 1f);
 
     private const float FastPart = 2f / 3f;
 
