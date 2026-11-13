@@ -52,9 +52,9 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.2d.sprite": {
-      "version": "file:com.unity.2d.sprite",
+      "version": "1.0.0",
       "depth": 0,
-      "source": "embedded",
+      "source": "builtin",
       "dependencies": {}
     },
     "com.unity.2d.spriteshape": {
