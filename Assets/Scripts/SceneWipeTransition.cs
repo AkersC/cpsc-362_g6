@@ -1,21 +1,19 @@
-
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-
 public class SceneWipeTransition : MonoBehaviour
 {
     public static SceneWipeTransition Instance;
 
-    [SerializeField] private float fastDuration = 0.3f;   
-    [SerializeField] private float easeDuration = 0.5f;  
-    [SerializeField] private float holdDuration = 0.5f;   
-    [SerializeField] private float patternScale = 4f;     
-    [SerializeField] private Texture2D patternTexture;     
+    [SerializeField] private float fastDuration = 0.3f;
+    [SerializeField] private float easeDuration = 0.5f;
+    [SerializeField] private float holdDuration = 0.5f;
+    [SerializeField] private float patternScale = 4f;
+    [SerializeField] private Texture2D patternTexture;
     [SerializeField] private Color wipeColor =
-        new Color(0.79f, 0.66f, 0.51f, 1f);               
+        new Color(0.79f, 0.66f, 0.51f, 1f);
 
     private const float FastPart = 2f / 3f;
 
@@ -23,10 +21,8 @@ public class SceneWipeTransition : MonoBehaviour
     private RawImage wipeImage;
     private Texture2D pattern;
     private bool isTransitioning;
-    private float expo; 
+    private float expo;
 
-    
-    
     public static void Load(string sceneName)
     {
         if (Instance == null)
@@ -46,7 +42,7 @@ public class SceneWipeTransition : MonoBehaviour
         }
 
         Instance = this;
-        transform.SetParent(null); 
+        transform.SetParent(null);
         DontDestroyOnLoad(gameObject);
         CreateWipe();
         expo = SolveExpo();
@@ -84,7 +80,7 @@ public class SceneWipeTransition : MonoBehaviour
         wipeRect.offsetMax = Vector2.zero;
 
         wipeImage = wipeObject.GetComponent<RawImage>();
-        wipeImage.raycastTarget = true; 
+        wipeImage.raycastTarget = true;
 
         pattern = patternTexture;
         if (pattern != null)
@@ -116,12 +112,10 @@ public class SceneWipeTransition : MonoBehaviour
         isTransitioning = true;
         Time.timeScale = 1f;
 
-        
         yield return Animate(fastDuration, t => FastPart * t);
         yield return Animate(easeDuration, t => FastPart + (1f - FastPart) * EaseOutExpo(t));
         SetCover(1f);
 
-        
         float covered = 0f;
         AsyncOperation load = SceneManager.LoadSceneAsync(sceneName);
         while (!load.isDone || covered < holdDuration)
@@ -132,7 +126,6 @@ public class SceneWipeTransition : MonoBehaviour
 
         Time.timeScale = 1f;
 
-        
         yield return Animate(easeDuration, t => 1f - (1f - FastPart) * EaseInExpo(t));
         yield return Animate(fastDuration, t => FastPart * (1f - t));
         SetCover(0f);
@@ -140,7 +133,6 @@ public class SceneWipeTransition : MonoBehaviour
         isTransitioning = false;
     }
 
-    
     private IEnumerator Animate(float duration, System.Func<float, float> curve)
     {
         float elapsed = 0f;
@@ -152,7 +144,6 @@ public class SceneWipeTransition : MonoBehaviour
         }
     }
 
-    
     private void SetCover(float amount)
     {
         wipeRect.anchorMin = new Vector2(0f, 1f - amount);
@@ -180,7 +171,6 @@ public class SceneWipeTransition : MonoBehaviour
         return (Mathf.Pow(2f, expo * t) - 1f) / (Mathf.Pow(2f, expo) - 1f);
     }
 
-    
     private float SolveExpo()
     {
         float fastSpeed = FastPart / Mathf.Max(fastDuration, 0.01f);

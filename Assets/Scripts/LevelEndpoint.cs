@@ -1,4 +1,3 @@
-
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -34,18 +33,16 @@ public class LevelEndpoint : MonoBehaviour
         }
     }
 
-    
-public void LoadNextLevel()
-{
-    if (!Application.CanStreamedLevelBeLoaded(nextLevelName))
+    public void LoadNextLevel()
     {
-        Debug.LogWarning("Next level not found: " + nextLevelName);
-        return;
+        if (!Application.CanStreamedLevelBeLoaded(nextLevelName))
+        {
+            Debug.LogWarning("Next level not found: " + nextLevelName);
+            return;
+        }
+
+        SceneWipeTransition.Load(nextLevelName);
     }
-
-    SceneWipeTransition.Load(nextLevelName);
-}
-
 
     public void LoadMainMenu()
     {
