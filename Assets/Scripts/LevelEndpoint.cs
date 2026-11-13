@@ -26,6 +26,7 @@ public class LevelEndpoint : MonoBehaviour
         {
             levelCompleteCanvas.SetActive(true);
             Time.timeScale = 0f;
+            new MenuSlideIn(this, levelCompleteCanvas.transform).Play();
         }
         else
         {

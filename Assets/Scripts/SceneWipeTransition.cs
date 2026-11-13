@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -172,6 +173,50 @@ public class SceneWipeTransition : MonoBehaviour
 
     private float SolveExpo()
     {
+        return SolveExpo(fastDuration, easeDuration);
+    }
+
+    public const float MenuInSpeedUp = 1.5f;
+
+    public const float MenuOutSpeedUp = 2f;
+
+    public static float MenuFastDuration(float speedUp)
+    {
+        return (Instance != null ? Instance.fastDuration : 0.3f) / speedUp;
+    }
+
+    public static float MenuEaseDuration(float speedUp)
+    {
+        return (Instance != null ? Instance.easeDuration : 0.5f) / speedUp;
+    }
+
+    public static float CoverProgress(float elapsed, float fast, float ease, float k)
+    {
+        if (elapsed < fast)
+        {
+            return FastPart * (elapsed / fast);
+        }
+
+        float t = Mathf.Clamp01((elapsed - fast) / ease);
+        float eased = (1f - Mathf.Pow(2f, -k * t)) / (1f - Mathf.Pow(2f, -k));
+        return FastPart + (1f - FastPart) * eased;
+    }
+
+    public static float UncoverProgress(float elapsed, float fast, float ease, float k)
+    {
+        if (elapsed < ease)
+        {
+            float t = elapsed / ease;
+            float eased = (Mathf.Pow(2f, k * t) - 1f) / (Mathf.Pow(2f, k) - 1f);
+            return (1f - FastPart) * eased;
+        }
+
+        float f = Mathf.Clamp01((elapsed - ease) / fast);
+        return (1f - FastPart) + FastPart * f;
+    }
+
+    public static float SolveExpo(float fastDuration, float easeDuration)
+    {
         float fastSpeed = FastPart / Mathf.Max(fastDuration, 0.01f);
         float target = fastSpeed * easeDuration / (1f - FastPart);
 
@@ -183,5 +228,166 @@ public class SceneWipeTransition : MonoBehaviour
             if (edgeSpeed < target) lo = k; else hi = k;
         }
         return (lo + hi) * 0.5f;
+    }
+}
+
+public class MenuSlideIn
+{
+    private readonly MonoBehaviour host;
+    private readonly Canvas canvas;
+    private readonly List<RectTransform> items = new List<RectTransform>();
+    private readonly List<Vector2> restPositions = new List<Vector2>();
+    private Coroutine running;
+    private bool closing;
+
+    public MenuSlideIn(MonoBehaviour host, Transform root)
+    {
+        this.host = host;
+        canvas = root.GetComponentInParent<Canvas>(true);
+        Collect(root);
+    }
+
+    public bool IsClosing
+    {
+        get { return closing; }
+    }
+
+    private void Collect(Transform parent)
+    {
+        foreach (Transform child in parent)
+        {
+            RectTransform rt = child as RectTransform;
+            if (rt == null)
+            {
+                continue;
+            }
+
+            bool fullScreen = rt.anchorMin == Vector2.zero && rt.anchorMax == Vector2.one;
+            if (fullScreen)
+            {
+                Collect(rt);
+            }
+            else
+            {
+                items.Add(rt);
+                restPositions.Add(rt.anchoredPosition);
+            }
+        }
+    }
+
+    public void Play()
+    {
+        Stop();
+        running = host.StartCoroutine(SlideIn());
+    }
+
+    public void PlayOut(System.Action onDone)
+    {
+        if (closing)
+        {
+            return;
+        }
+
+        if (running != null)
+        {
+            host.StopCoroutine(running);
+            running = null;
+        }
+
+        closing = true;
+        running = host.StartCoroutine(SlideOut(onDone));
+    }
+
+    public void Stop()
+    {
+        if (running != null)
+        {
+            host.StopCoroutine(running);
+            running = null;
+        }
+
+        closing = false;
+        SetOffset(0f);
+    }
+
+    private IEnumerator SlideIn()
+    {
+        float distance = ScreenHeight();
+        float fast = SceneWipeTransition.MenuFastDuration(SceneWipeTransition.MenuInSpeedUp);
+        float ease = SceneWipeTransition.MenuEaseDuration(SceneWipeTransition.MenuInSpeedUp);
+        float k = SceneWipeTransition.SolveExpo(fast, ease);
+        float elapsed = 0f;
+
+        SetOffset(-distance);
+        while (elapsed < fast + ease)
+        {
+            yield return null;
+            elapsed += Time.unscaledDeltaTime;
+            float progress = SceneWipeTransition.CoverProgress(elapsed, fast, ease, k);
+            SetOffset(-distance * (1f - progress));
+        }
+
+        SetOffset(0f);
+        running = null;
+    }
+
+    private IEnumerator SlideOut(System.Action onDone)
+    {
+        float distance = ScreenHeight();
+        float fast = SceneWipeTransition.MenuFastDuration(SceneWipeTransition.MenuOutSpeedUp);
+        float ease = SceneWipeTransition.MenuEaseDuration(SceneWipeTransition.MenuOutSpeedUp);
+        float k = SceneWipeTransition.SolveExpo(fast, ease);
+        float start = CurrentOffset();
+        float elapsed = 0f;
+
+        while (elapsed < fast + ease)
+        {
+            yield return null;
+            elapsed += Time.unscaledDeltaTime;
+            float progress = SceneWipeTransition.UncoverProgress(elapsed, fast, ease, k);
+            SetOffset(Mathf.Lerp(start, -distance, progress));
+        }
+
+        SetOffset(-distance);
+        running = null;
+        closing = false;
+
+        if (onDone != null)
+        {
+            onDone();
+        }
+    }
+
+    private float CurrentOffset()
+    {
+        if (items.Count == 0)
+        {
+            return 0f;
+        }
+
+        return items[0].anchoredPosition.y - restPositions[0].y;
+    }
+
+    private float ScreenHeight()
+    {
+        Canvas.ForceUpdateCanvases();
+        if (canvas != null)
+        {
+            float height = canvas.rootCanvas.GetComponent<RectTransform>().rect.height;
+            if (height > 0f)
+            {
+                return height;
+            }
+        }
+
+        return 1080f;
+    }
+
+    private void SetOffset(float y)
+    {
+        for (int i = 0; i < items.Count; i++)
+        {
+            items[i].anchoredPosition = restPositions[i] + new Vector2(0f, y);
+        }
     }
 }
