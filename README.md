@@ -91,3 +91,12 @@ public class PauseGame : MonoBehaviour
         SceneWipeTransition.Load("MainMenu");
     }
 }
+
+# Kevin's Review
+1. **Errors:** Escape input is guarded during closing animations, but button actions may still overlap unless `PlayOut()` prevents repeated requests. The animation also needs unscaled time to run while gameplay is paused.
+
+2. **Requirements:** The changes support animated pause, resume, restart, and main-menu navigation. Testing should confirm that returning to the menu restores normal time.
+
+3. **Consistency:** The code follows the project’s input and scene-management conventions. The shared `CloseMenu()` method keeps closing behavior consistent.
+
+4. **Manageability:** Separating animations from completion callbacks makes the code easy to follow. A shared guard for keyboard and button actions would make it more reliable.
